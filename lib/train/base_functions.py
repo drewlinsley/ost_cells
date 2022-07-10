@@ -1,7 +1,7 @@
 import torch
 from torch.utils.data.distributed import DistributedSampler
 # datasets related
-from lib.train.dataset import Lasot, Got10k, MSCOCOSeq, ImagenetVID, TrackingNet
+from lib.train.dataset import Dream, Lasot, Got10k, MSCOCOSeq, ImagenetVID, TrackingNet
 from lib.train.dataset import Lasot_lmdb, Got10k_lmdb, MSCOCOSeq_lmdb, ImagenetVID_lmdb, TrackingNet_lmdb
 from lib.train.data import sampler, opencv_loader, processing, LTRLoader
 import lib.train.data.transforms as tfm
@@ -28,8 +28,8 @@ def names2datasets(name_list: list, settings, image_loader):
     assert isinstance(name_list, list)
     datasets = []
     for name in name_list:
-        assert name in ["LASOT", "GOT10K_vottrain", "GOT10K_votval", "GOT10K_train_full", "GOT10K_official_val",
-                        "COCO17", "VID", "TRACKINGNET"]
+        if name not in ["LASOT", "Dream", "GOT10K_vottrain", "GOT10K_votval", "GOT10K_train_full", "COCO17", "VID", "TRACKINGNET"]:
+            raise NotImplementedError("Cannot find {} dataset in lib/train/base_functions.py".format(name))
         if name == "LASOT":
             if settings.use_lmdb:
                 print("Building lasot dataset from lmdb")
@@ -54,11 +54,6 @@ def names2datasets(name_list: list, settings, image_loader):
                 datasets.append(Got10k_lmdb(settings.env.got10k_lmdb_dir, split='votval', image_loader=image_loader))
             else:
                 datasets.append(Got10k(settings.env.got10k_dir, split='votval', image_loader=image_loader))
-        if name == "GOT10K_official_val":
-            if settings.use_lmdb:
-                raise ValueError("Not implement")
-            else:
-                datasets.append(Got10k(settings.env.got10k_val_dir, split=None, image_loader=image_loader))
         if name == "COCO17":
             if settings.use_lmdb:
                 print("Building COCO2017 from lmdb")
@@ -78,6 +73,8 @@ def names2datasets(name_list: list, settings, image_loader):
             else:
                 # raise ValueError("NOW WE CAN ONLY USE TRACKINGNET FROM LMDB")
                 datasets.append(TrackingNet(settings.env.trackingnet_dir, image_loader=image_loader))
+        if name == "Dream":
+            datasets.append(Dream(settings.env.dream_dir, image_loader=image_loader))
     return datasets
 
 

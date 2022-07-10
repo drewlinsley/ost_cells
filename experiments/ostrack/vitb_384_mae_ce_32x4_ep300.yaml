@@ -27,24 +27,18 @@ DATA:
 
   TRAIN:
     DATASETS_NAME:
-    - LASOT
-    - GOT10K_vottrain
-    - COCO17
-    - TRACKINGNET
+    - Dream
     DATASETS_RATIO:
-    - 1
-    - 1
-    - 1
     - 1
     SAMPLE_PER_EPOCH: 60000
   VAL:
     DATASETS_NAME:
-    - GOT10K_votval
+    - Dream
     DATASETS_RATIO:
     - 1
     SAMPLE_PER_EPOCH: 10000
 MODEL:
-  PRETRAIN_FILE: "mae_pretrain_vit_base.pth"
+  PRETRAIN_FILE: "/content/ost_cells/OSTrack/vitb_384_mae_ce_32x4_ep300/OSTrack_ep0300.pth.tar"  # "mae_pretrain_vit_base.pth"
   EXTRA_MERGER: False
   RETURN_INTER: False
   BACKBONE:
@@ -59,14 +53,14 @@ MODEL:
 TRAIN:
   BACKBONE_MULTIPLIER: 0.1
   DROP_PATH_RATE: 0.1
-  BATCH_SIZE: 32
+  BATCH_SIZE: 4
   EPOCH: 300
   GIOU_WEIGHT: 2.0
   L1_WEIGHT: 5.0
   GRAD_CLIP_NORM: 0.1
   LR: 0.0004
   LR_DROP_EPOCH: 240
-  NUM_WORKER: 10
+  NUM_WORKER: 4
   OPTIMIZER: ADAMW
   PRINT_INTERVAL: 50
   SCHEDULER:
