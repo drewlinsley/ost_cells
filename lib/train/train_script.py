@@ -58,7 +58,6 @@ def run(settings):
 
     # wrap networks to distributed one
     net.cuda()
-    import pdb;pdb.set_trace()
     if settings.local_rank != -1:
         # net = torch.nn.SyncBatchNorm.convert_sync_batchnorm(net)  # add syncBN converter
         net = DDP(net, device_ids=[settings.local_rank], find_unused_parameters=True)
