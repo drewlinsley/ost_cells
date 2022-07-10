@@ -40,7 +40,7 @@ class Dream(BaseVideoDataset):
 
         if data_fraction is not None:
             self.sequence_list = random.sample(self.sequence_list, int(len(self.sequence_list)*data_fraction))
-
+        import pdb;pdb.set_trace()
         self.seq_per_class = {self.class_list[0]: self.sequence_list}  # self._build_class_list()
 
     def _build_sequence_list(self, vid_ids=None, split=None, root=None):
@@ -178,6 +178,7 @@ class Dream(BaseVideoDataset):
         return obj_class
 
     def get_frames(self, seq_id, frame_ids, anno=None):
+        import pdb;pdb.set_trace()
         seq_path = self._get_sequence_path(seq_id)
 
         obj_class = 1  # self._get_class(seq_path)
