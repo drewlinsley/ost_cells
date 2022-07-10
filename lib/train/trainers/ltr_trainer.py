@@ -70,6 +70,7 @@ class LTRTrainer(BaseTrainer):
         torch.set_grad_enabled(loader.training)
 
         self._init_timing()
+        import pdb;pdb.set_trace()
         for i, data in enumerate(loader, 1):
             self.data_read_done_time = time.time()
             # get inputs
