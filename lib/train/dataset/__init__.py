@@ -1,5 +1,6 @@
 from .lasot import Lasot
 from .got10k import Got10k
+from .dream import Dream
 from .tracking_net import TrackingNet
 from .imagenetvid import ImagenetVID
 from .coco import MSCOCO
