@@ -34,6 +34,8 @@ OSTrack-256 can be trained in ~23 hours with 4*2080Ti (11GB of memory per GPU), 
   
 3. Pretrained Transformer weights enables faster convergence.
 
+`python tracking/train.py --script ostrack --config vitb_384_mae_ce_32x4_ep300 --save_dir ./output --mode single --nproc_per_node 4 --use_wandb 1`
+
 ### :star2: Good performance-speed trade-off
 
 [//]: # (![speed_vs_performance]&#40;https://github.com/botaoye/OSTrack/blob/main/assets/speed_vs_performance.png&#41;)

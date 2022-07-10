@@ -166,12 +166,14 @@ class Tracker:
 
         params.tracker_name = self.name
         params.param_name = self.parameter_name
-        # self._init_visdom(visdom_info, debug_)
+        self._init_visdom(visdom_info, debug_)
 
         multiobj_mode = getattr(params, 'multiobj_mode', getattr(self.tracker_class, 'multiobj_mode', 'default'))
 
         if multiobj_mode == 'default':
             tracker = self.create_tracker(params)
+            if hasattr(tracker, 'initialize_features'):
+                tracker.initialize_features()
 
         elif multiobj_mode == 'parallel':
             tracker = MultiObjectWrapper(self.tracker_class, params, self.visdom, fast_load=True)
@@ -181,27 +183,34 @@ class Tracker:
         assert os.path.isfile(videofilepath), "Invalid param {}".format(videofilepath)
         ", videofilepath must be a valid videofile"
 
-        output_boxes = []
+        output_boxes, output_confidence = [], []
 
-        cap = cv.VideoCapture(videofilepath)
-        display_name = 'Display: ' + tracker.params.tracker_name
-        cv.namedWindow(display_name, cv.WINDOW_NORMAL | cv.WINDOW_KEEPRATIO)
-        cv.resizeWindow(display_name, 960, 720)
-        success, frame = cap.read()
-        cv.imshow(display_name, frame)
+        # cap = cv.VideoCapture(videofilepath)
+        frames = np.load(videofilepath)
+        # cap = cv.VideoCapture(videofilepath)
+        # success, frame = cap.read()
+        frame = frames[0]
+
+        # display_name = 'Display: ' + tracker.params.tracker_name
+        # cv.namedWindow(display_name, cv.WINDOW_NORMAL | cv.WINDOW_KEEPRATIO)
+        # cv.resizeWindow(display_name, 960, 720)
+        # # success, frame = cap.read()
+        # cv.imshow(display_name, frame)
 
         def _build_init_info(box):
-            return {'init_bbox': box}
+            return {'init_bbox': OrderedDict({1: box}), 'init_object_ids': [1, ], 'object_ids': [1, ],
+                    'sequence_object_ids': [1, ]}
 
-        if success is not True:
-            print("Read frame from {} failed.".format(videofilepath))
-            exit(-1)
+        # if success is not True:
+        #     print("Read frame from {} failed.".format(videofilepath))
+        #     exit(-1)
         if optional_box is not None:
-            assert isinstance(optional_box, (list, tuple))
-            assert len(optional_box) == 4, "valid box's foramt is [x,y,w,h]"
+            # assert isinstance(optional_box, (list, tuple))
+            # assert len(optional_box) == 4, "valid box's foramt is [x,y,w,h]"
             tracker.initialize(frame, _build_init_info(optional_box))
             output_boxes.append(optional_box)
         else:
+            raise NotImplementedError("Interactive isnt working right now")
             while True:
                 # cv.waitKey()
                 frame_disp = frame.copy()
@@ -214,63 +223,34 @@ class Tracker:
                 tracker.initialize(frame, _build_init_info(init_state))
                 output_boxes.append(init_state)
                 break
+        output_confidence.append(1.)
+        for trk in tracker.trackers.items():
+            trk = trk[1]
+            if hasattr(trk.net, "reset_states"):
+                trk.net.reset_states()
 
-        while True:
-            ret, frame = cap.read()
+        # while True:
+        #     ret, frame = cap.read()
+        for frame in frames:
 
             if frame is None:
                 break
 
-            frame_disp = frame.copy()
+            # frame_disp = frame.copy()
 
             # Draw box
             out = tracker.track(frame)
-            state = [int(s) for s in out['target_bbox']]
+            import pdb;pdb.set_trace()
+            state = [int(s) for s in out['target_bbox'][1]]
+            conf = max(out["max_score"][1])
+            # If the tracker box confidence is < threshold, kill the tracker
+            if out["max_score"][1].max() < 0.9:
+                return output_boxes, output_confidence
+            print({k: max(v) for k, v in out["max_score"].items()}, state)
             output_boxes.append(state)
+            output_confidence.append(conf)
 
-            cv.rectangle(frame_disp, (state[0], state[1]), (state[2] + state[0], state[3] + state[1]),
-                         (0, 255, 0), 5)
-
-            font_color = (0, 0, 0)
-            cv.putText(frame_disp, 'Tracking!', (20, 30), cv.FONT_HERSHEY_COMPLEX_SMALL, 1,
-                       font_color, 1)
-            cv.putText(frame_disp, 'Press r to reset', (20, 55), cv.FONT_HERSHEY_COMPLEX_SMALL, 1,
-                       font_color, 1)
-            cv.putText(frame_disp, 'Press q to quit', (20, 80), cv.FONT_HERSHEY_COMPLEX_SMALL, 1,
-                       font_color, 1)
-
-            # Display the resulting frame
-            cv.imshow(display_name, frame_disp)
-            key = cv.waitKey(1)
-            if key == ord('q'):
-                break
-            elif key == ord('r'):
-                ret, frame = cap.read()
-                frame_disp = frame.copy()
-
-                cv.putText(frame_disp, 'Select target ROI and press ENTER', (20, 30), cv.FONT_HERSHEY_COMPLEX_SMALL, 1.5,
-                           (0, 0, 0), 1)
-
-                cv.imshow(display_name, frame_disp)
-                x, y, w, h = cv.selectROI(display_name, frame_disp, fromCenter=False)
-                init_state = [x, y, w, h]
-                tracker.initialize(frame, _build_init_info(init_state))
-                output_boxes.append(init_state)
-
-        # When everything done, release the capture
-        cap.release()
-        cv.destroyAllWindows()
-
-        if save_results:
-            if not os.path.exists(self.results_dir):
-                os.makedirs(self.results_dir)
-            video_name = Path(videofilepath).stem
-            base_results_path = os.path.join(self.results_dir, 'video_{}'.format(video_name))
-
-            tracked_bb = np.array(output_boxes).astype(int)
-            bbox_file = '{}.txt'.format(base_results_path)
-            np.savetxt(bbox_file, tracked_bb, delimiter='\t', fmt='%d')
-
+        return output_boxes, output_confidence
 
     def get_parameters(self):
         """Get parameters."""
