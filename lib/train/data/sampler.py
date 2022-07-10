@@ -110,7 +110,6 @@ class TrackingSampler(torch.utils.data.Dataset):
             is_video_dataset = dataset.is_video_sequence()
 
             # sample a sequence from the given dataset
-            import pdb;pdb.set_trace()
             seq_id, visible, seq_info_dict = self.sample_seq_from_dataset(dataset, is_video_dataset)
 
             if is_video_dataset:
@@ -264,6 +263,7 @@ class TrackingSampler(torch.utils.data.Dataset):
 
         # Sample a sequence with enough visible frames
         enough_visible_frames = False
+        import pdb;pdb.set_trace()
         while not enough_visible_frames:
             # Sample a sequence
             seq_id = random.randint(0, dataset.get_num_sequences() - 1)
