@@ -42,7 +42,6 @@ class BaseTrainer:
         if settings is not None:
             self.settings = settings
 
-        import pdb;pdb.set_trace()
         if self.settings.env.workspace_dir is not None:
             self.settings.env.workspace_dir = os.path.expanduser(self.settings.env.workspace_dir)
             '''2021.1.4 New function: specify checkpoint dir'''
@@ -92,7 +91,6 @@ class BaseTrainer:
                             self.lr_scheduler.step(epoch - 1)
                     # only save the last 10 checkpoints
                     save_every_epoch = getattr(self.settings, "save_every_epoch", True)
-                    print(save_every_epoch)
                     save_epochs = [79, 159, 239]
                     if epoch > (max_epochs - 1) or save_every_epoch or epoch % 40 == 0 or epoch in save_epochs or epoch > (max_epochs - 5):
                     # if epoch > (max_epochs - 10) or save_every_epoch or epoch % 100 == 0:
