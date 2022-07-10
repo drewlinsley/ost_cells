@@ -30,7 +30,7 @@ DATA:
     - Dream
     DATASETS_RATIO:
     - 1
-    SAMPLE_PER_EPOCH: 5  # 60000
+    SAMPLE_PER_EPOCH: 100  # 60000
   VAL:
     DATASETS_NAME:
     - Dream
