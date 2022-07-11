@@ -197,9 +197,11 @@ class Tracker:
         # # success, frame = cap.read()
         # cv.imshow(display_name, frame)
 
+        # def _build_init_info(box):
+        #     return {'init_bbox': OrderedDict({1: box}), 'init_object_ids': [1, ], 'object_ids': [1, ],
+        #             'sequence_object_ids': [1, ]}
         def _build_init_info(box):
-            return {'init_bbox': OrderedDict({1: box}), 'init_object_ids': [1, ], 'object_ids': [1, ],
-                    'sequence_object_ids': [1, ]}
+            return {'init_bbox': box}
 
         # if success is not True:
         #     print("Read frame from {} failed.".format(videofilepath))
