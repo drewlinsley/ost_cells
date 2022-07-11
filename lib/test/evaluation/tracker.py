@@ -166,7 +166,7 @@ class Tracker:
 
         params.tracker_name = self.name
         params.param_name = self.parameter_name
-        self._init_visdom(visdom_info, debug_)
+        # self._init_visdom(visdom_info, debug_)
 
         multiobj_mode = getattr(params, 'multiobj_mode', getattr(self.tracker_class, 'multiobj_mode', 'default'))
 
