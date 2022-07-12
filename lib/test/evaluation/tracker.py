@@ -236,7 +236,6 @@ class Tracker:
 
             # Draw box
             out = tracker.track(frame)
-            import pdb;pdb.set_trace()
             state = [int(s) for s in out["target_bbox"]]
             conf = out["bbox_score"]
             heatmap = out["heatmap"].squeeze().cpu().detach()
