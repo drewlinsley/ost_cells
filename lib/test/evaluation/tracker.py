@@ -224,10 +224,6 @@ class Tracker:
                 output_boxes.append(init_state)
                 break
         output_confidence.append(1.)
-        for trk in tracker.trackers.items():
-            trk = trk[1]
-            if hasattr(trk.net, "reset_states"):
-                trk.net.reset_states()
 
         # while True:
         #     ret, frame = cap.read()
