@@ -129,10 +129,11 @@ class OSTrack(BaseTracker):
             return {"target_bbox": self.state,
                     "all_boxes": all_boxes_save}
         else:
+
             return {
                 "target_bbox": self.state,
-                "heatmap": pred_score_map * self.output_window,
-                "bbox_score": bbox_score
+                "heatmap": response.detach().cpu().numpy(),
+                "bbox_score": bbox_score.detach().cpu().numpy()
             }
 
     def map_box_back(self, pred_box: list, resize_factor: float):
