@@ -247,7 +247,7 @@ class Tracker:
             output_confidence.append(conf)
             output_heatmaps.append(heatmap)
 
-        return output_boxes, output_confidence
+        return output_boxes, output_confidence, output_heatmaps
 
     def get_parameters(self):
         """Get parameters."""
