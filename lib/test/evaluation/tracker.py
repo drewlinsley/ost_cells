@@ -242,7 +242,7 @@ class Tracker:
             # If the tracker box confidence is < threshold, kill the tracker
             # if conf < 0.9:
             #     return output_boxes, output_confidence, output_heatmaps
-            print({k: max(v) for k, v in out["max_score"].items()}, state)
+            # print({k: max(v) for k, v in out["max_score"].items()}, state)
             output_boxes.append(state)
             output_confidence.append(conf)
             output_heatmaps.append(heatmap)
