@@ -168,7 +168,7 @@ class Tracker:
         params.param_name = self.parameter_name
         # self._init_visdom(visdom_info, debug_)
 
-        multiobj_mode = True  #getattr(params, 'multiobj_mode', getattr(self.tracker_class, 'multiobj_mode', 'default'))
+        multiobj_mode = getattr(params, 'multiobj_mode', getattr(self.tracker_class, 'multiobj_mode', 'default'))
 
         if multiobj_mode == 'default':
             tracker = self.create_tracker(params)
