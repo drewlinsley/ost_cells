@@ -205,6 +205,7 @@ class Tracker:
 
 
         if optional_box is not None:
+            import pdb;pdb.set_trace()
             assert isinstance(optional_box, (list, tuple))
             assert len(optional_box) == 4, "valid box's foramt is [x,y,w,h]"
             tracker.initialize(frame, _build_init_info(optional_box))
