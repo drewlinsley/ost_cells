@@ -122,7 +122,6 @@ class OSTrack(BaseTracker):
                         self.step = False
                         break
 
-        import pdb;pdb.set_trace()
         if self.save_all_boxes:
             '''save all predictions'''
             all_boxes = self.map_box_back_batch(pred_boxes * self.params.search_size / resize_factor, resize_factor)
@@ -132,7 +131,7 @@ class OSTrack(BaseTracker):
         else:
             return {
                 "target_bbox": self.state,
-                "figure": pred_score_map * self.output_window,
+                "heatmap": pred_score_map * self.output_window,
                 "bbox_score": bbox_score
             }
 
