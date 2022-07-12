@@ -183,7 +183,7 @@ class Tracker:
         assert os.path.isfile(videofilepath), "Invalid param {}".format(videofilepath)
         ", videofilepath must be a valid videofile"
 
-        output_boxes, output_confidence = [], []
+        output_boxes, output_confidence, output_heatmaps = [], [], []
 
         # cap = cv.VideoCapture(videofilepath)
         frames = np.load(videofilepath)
@@ -237,14 +237,16 @@ class Tracker:
             # Draw box
             out = tracker.track(frame)
             import pdb;pdb.set_trace()
-            state = [int(s) for s in out['target_bbox']]
-            conf = max(out["max_score"][1])
+            state = [int(s) for s in out["target_bbox"]]
+            conf = out["bbox_score"]
+            heatmap = out["heatmap"].squeeze().cpu().detach()
             # If the tracker box confidence is < threshold, kill the tracker
-            if out["max_score"][1].max() < 0.9:
-                return output_boxes, output_confidence
+            if conf < 0.9:
+                return output_boxes, output_confidence, output_heatmaps
             print({k: max(v) for k, v in out["max_score"].items()}, state)
             output_boxes.append(state)
             output_confidence.append(conf)
+            output_heatmaps.append(heatmap)
 
         return output_boxes, output_confidence
 

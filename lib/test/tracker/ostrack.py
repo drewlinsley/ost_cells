@@ -87,7 +87,7 @@ class OSTrack(BaseTracker):
         # add hann windows
         pred_score_map = out_dict['score_map']
         response = self.output_window * pred_score_map
-        pred_boxes = self.network.box_head.cal_bbox(response, out_dict['size_map'], out_dict['offset_map'])
+        pred_boxes, bbox_score = self.network.box_head.cal_bbox(response, out_dict['size_map'], out_dict['offset_map'], return_score=True)
         pred_boxes = pred_boxes.view(-1, 4)
         # Baseline: Take the mean of all pred boxes as the final result
         pred_box = (pred_boxes.mean(
@@ -130,7 +130,11 @@ class OSTrack(BaseTracker):
             return {"target_bbox": self.state,
                     "all_boxes": all_boxes_save}
         else:
-            return {"target_bbox": self.state}
+            return {
+                "target_bbox": self.state,
+                "figure": pred_score_map * self.output_window,
+                "bbox_score": bbox_score
+            }
 
     def map_box_back(self, pred_box: list, resize_factor: float):
         cx_prev, cy_prev = self.state[0] + 0.5 * self.state[2], self.state[1] + 0.5 * self.state[3]
