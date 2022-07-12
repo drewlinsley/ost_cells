@@ -23,7 +23,7 @@ def parameters(yaml_name: str):
     # Network checkpoint path
     # params.checkpoint = os.path.join(save_dir, "checkpoints/train/ostrack/%s/OSTrack_ep%04d.pth.tar" %
     #                                  (yaml_name, cfg.TEST.EPOCH))
-    params.checkpoint = "/content/drive/MyDrive/tracking_cells/checkpoints/ost_cells/OSTrack_ep0007.pth.tar"
+    params.checkpoint = "/content/drive/MyDrive/tracking_cells/checkpoints/ost_cells/OSTrack_ep0010.pth.tar"
     # whether to save boxes from all queries
     params.save_all_boxes = False
 
