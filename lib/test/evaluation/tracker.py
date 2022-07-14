@@ -151,7 +151,7 @@ class Tracker:
 
         return output
 
-    def run_video(self, videofilepath, optional_box=None, debug=None, visdom_info=None, save_results=False):
+    def run_video(self, frames, optional_box=None, debug=None, visdom_info=None, save_results=False):
         """Run the tracker with the vieofile.
         args:
             debug: Debug level.
@@ -180,13 +180,9 @@ class Tracker:
         else:
             raise ValueError('Unknown multi object mode {}'.format(multiobj_mode))
 
-        assert os.path.isfile(videofilepath), "Invalid param {}".format(videofilepath)
-        ", videofilepath must be a valid videofile"
-
         output_boxes, output_confidence, output_heatmaps = [], [], []
 
         # cap = cv.VideoCapture(videofilepath)
-        frames = np.load(videofilepath)
         # cap = cv.VideoCapture(videofilepath)
         # success, frame = cap.read()
         frame = frames[0]
@@ -204,35 +200,15 @@ class Tracker:
             return {'init_bbox': box}
 
 
-        if optional_box is not None:
-            assert isinstance(optional_box, (list, tuple))
-            assert len(optional_box) == 4, "valid box's foramt is [x,y,w,h]"
-            tracker.initialize(frame, _build_init_info(optional_box))
-            output_boxes.append(optional_box)
-        else:
-            raise NotImplementedError("Interactive isnt working right now")
-            while True:
-                # cv.waitKey()
-                frame_disp = frame.copy()
+        assert optional_box is not None
+        assert isinstance(optional_box, (list, tuple))
+        assert len(optional_box) == 4, "valid box's foramt is [x,y,w,h]"
+        tracker.initialize(frame, _build_init_info(optional_box))
 
-                cv.putText(frame_disp, 'Select target ROI and press ENTER', (20, 30), cv.FONT_HERSHEY_COMPLEX_SMALL,
-                           1.5, (0, 0, 0), 1)
-
-                x, y, w, h = cv.selectROI(display_name, frame_disp, fromCenter=False)
-                init_state = [x, y, w, h]
-                tracker.initialize(frame, _build_init_info(init_state))
-                output_boxes.append(init_state)
-                break
-        output_confidence.append(1.)
-
-        # while True:
-        #     ret, frame = cap.read()
         for frame in frames:
 
             if frame is None:
                 break
-
-            # frame_disp = frame.copy()
 
             # Draw box
             out = tracker.track(frame)
