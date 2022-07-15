@@ -216,8 +216,8 @@ class Tracker:
             conf = out["bbox_score"]
             heatmap = out["heatmap"]  # .squeeze().cpu().detach()
             # If the tracker box confidence is < threshold, kill the tracker
-            if conf < 0.1:
-                return output_boxes, output_confidence, output_heatmaps
+            # if conf < 0.1:
+            #     return output_boxes, output_confidence, output_heatmaps
             # print({k: max(v) for k, v in out["max_score"].items()}, state)
             output_boxes.append(state)
             output_confidence.append(conf)
