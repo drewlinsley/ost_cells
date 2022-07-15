@@ -63,7 +63,7 @@ cfg.TRAIN.SCHEDULER.DECAY_RATE = 0.1
 
 # DATA
 cfg.DATA = edict()
-cfg.DATA.SAMPLER_MODE = "interval"  # "causal"  # sampling methods
+cfg.DATA.SAMPLER_MODE = "causal"  # sampling methods
 cfg.DATA.MEAN = [0.485, 0.456, 0.406]
 cfg.DATA.STD = [0.229, 0.224, 0.225]
 cfg.DATA.MAX_SAMPLE_INTERVAL = 200
