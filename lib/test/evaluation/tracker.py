@@ -266,6 +266,7 @@ class Tracker:
             encoding = out["encodings"]
 
             # Figure out how to summarize encodings
+            import pdb;pdb.set_trace()
             encoding = encoding.mean(0).detach().cpu().numpy().reshape(1, -1)
             output_heatmaps.appened(encoding)
 
