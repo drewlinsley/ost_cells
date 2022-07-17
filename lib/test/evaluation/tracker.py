@@ -223,6 +223,8 @@ class Tracker:
             output_confidence.append(conf)
             output_heatmaps.append(heatmap)
 
+            tracker.initialize(frame, _build_init_info(state))  # Reinit the template
+
         return output_boxes, output_confidence, output_heatmaps
 
     def get_parameters(self):
