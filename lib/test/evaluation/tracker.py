@@ -275,7 +275,8 @@ class Tracker:
         assert len(optional_box) == 4, "valid box's foramt is [x,y,w,h]"
         tracker.initialize(frame, _build_init_info(optional_box))
 
-        for frame in frames:
+        for frame, state in zip(frames, states):
+            self.state = state  # Not tracking, so overwrite with existing tracks
 
             if frame is None:
                 break
