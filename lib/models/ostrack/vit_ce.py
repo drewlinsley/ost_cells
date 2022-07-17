@@ -105,7 +105,6 @@ class VisionTransformerCE(VisionTransformer):
                          ):
         B, H, W = x.shape[0], x.shape[2], x.shape[3]
 
-        import pdb;pdb.set_trace()
         x = self.patch_embed(x)
         z = self.patch_embed(z)
 

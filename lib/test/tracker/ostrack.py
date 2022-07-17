@@ -96,6 +96,7 @@ class OSTrack(BaseTracker):
         self.state = clip_box(self.map_box_back(pred_box, resize_factor), H, W, margin=10)
 
         # for debug
+        import pdb;pdb.set_trace()
         if self.debug:
             if not self.use_visdom:
                 x1, y1, w, h = self.state

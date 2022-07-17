@@ -227,6 +227,74 @@ class Tracker:
 
         return output_boxes, output_confidence, output_heatmaps
 
+    def extract_encodings(self, frames, optional_box=None, debug=None, visdom_info=None, save_results=False):
+        """Run the tracker with the vieofile.
+        args:
+            debug: Debug level.
+        """
+
+        params = self.get_parameters()
+
+        debug_ = debug
+        if debug is None:
+            debug_ = getattr(params, 'debug', 0)
+        params.debug = debug_
+
+        params.tracker_name = self.name
+        params.param_name = self.parameter_name
+        # self._init_visdom(visdom_info, debug_)
+
+        multiobj_mode = getattr(params, 'multiobj_mode', getattr(self.tracker_class, 'multiobj_mode', 'default'))
+
+        tracker = self.create_tracker(params)
+        if hasattr(tracker, 'initialize_features'):
+            tracker.initialize_features()
+
+        output_boxes, output_confidence, output_heatmaps = [], [], []
+
+        # cap = cv.VideoCapture(videofilepath)
+        # cap = cv.VideoCapture(videofilepath)
+        # success, frame = cap.read()
+        frame = frames[0]
+
+        # display_name = 'Display: ' + tracker.params.tracker_name
+        # cv.namedWindow(display_name, cv.WINDOW_NORMAL | cv.WINDOW_KEEPRATIO)
+        # cv.resizeWindow(display_name, 960, 720)
+        # # success, frame = cap.read()
+        # cv.imshow(display_name, frame)
+
+        # def _build_init_info(box):
+        #     return {'init_bbox': OrderedDict({1: box}), 'init_object_ids': [1, ], 'object_ids': [1, ],
+        #             'sequence_object_ids': [1, ]}
+        def _build_init_info(box):
+            return {'init_bbox': box}
+
+
+        assert optional_box is not None
+        assert isinstance(optional_box, (list, tuple))
+        assert len(optional_box) == 4, "valid box's foramt is [x,y,w,h]"
+        tracker.initialize(frame, _build_init_info(optional_box))
+
+        for frame in frames:
+
+            if frame is None:
+                break
+
+            # Draw box
+            out = tracker.track(frame)
+            state = [int(s) for s in out["target_bbox"]]
+            conf = out["bbox_score"]
+            heatmap = out["heatmap"]  # .squeeze().cpu().detach()
+            # If the tracker box confidence is < threshold, kill the tracker
+            # if conf < 0.1:
+            #     return output_boxes, output_confidence, output_heatmaps
+            # print({k: max(v) for k, v in out["max_score"].items()}, state)
+            output_boxes.append(state)
+            output_confidence.append(conf)
+            output_heatmaps.append(heatmap)
+
+        return output_boxes, output_confidence, output_heatmaps
+
     def get_parameters(self):
         """Get parameters."""
         param_module = importlib.import_module('lib.test.parameter.{}'.format(self.name))
