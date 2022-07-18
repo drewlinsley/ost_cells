@@ -312,7 +312,6 @@ class Tracker:
 
         # Next track framesb, compute distance of ||encodingb|| - encodinga_t||, and store gradient of difference wrt framesb
         tracker.initialize(framesb[0], _build_init_info(statesb[0]))
-        import pdb;pdb.set_trace()
         enc_b = []
         gradients = []
         for frame, state, enc_a in zip(framesb, statesb, encs_a):
@@ -323,13 +322,14 @@ class Tracker:
             frame.requires_grad()
             out = tracker.track(frame, store_grad=True)
             encoding = out["encodings"]
+            input_patch = out["input_patch"]  # Has a gradient
             enc_b = encoding.squeeze(0).mean(0).reshape(1, -1)
 
             # Get difference and gradient
             dist = ((enc_a - enc_b) ** 2).mean()
             tracker.zero_grad()
             dist.backward()
-            gradient = frame.grad.data
+            gradient = input_patch.grad.data
             gradients.append(gradient)
         return gradients
 

@@ -32,7 +32,6 @@ def sample_target(im, target_bb, search_area_factor, output_sz=None, mask=None):
     if crop_sz < 1:
         raise Exception('Too small bounding box.')
 
-    import pdb;pdb.set_trace()
     x1 = round(x + 0.5 * w - crop_sz * 0.5)
     x2 = x1 + crop_sz
 
