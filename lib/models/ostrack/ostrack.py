@@ -39,10 +39,13 @@ class OSTrack(nn.Module):
 
     def forward(self, template: torch.Tensor,
                 search: torch.Tensor,
+                store_grad=False,
                 ce_template_mask=None,
                 ce_keep_rate=None,
                 return_last_attn=False,
                 ):
+        if store_grad:
+            import pdb;pdb.set_trace()
         x, aux_dict = self.backbone(z=template, x=search,
                                     ce_template_mask=ce_template_mask,
                                     ce_keep_rate=ce_keep_rate,
