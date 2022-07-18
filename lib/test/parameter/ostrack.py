@@ -25,7 +25,7 @@ def parameters(yaml_name: str):
     #                                  (yaml_name, cfg.TEST.EPOCH))
     params.checkpoint = "/content/drive/MyDrive/tracking_cells/checkpoints/ost_cells_bak/OSTrack_ep0011.pth.tar"
     params.checkpoint = "/content/drive/MyDrive/tracking_cells/checkpoints/ost_cells_bak/OSTrack_ep0012.pth.tar"
-    params.checkpoint = "/content/drive/MyDrive/tracking_cells/checkpoints/ost_cells_v1/OSTrack_ep0012.pth.tar"
+    # params.checkpoint = "/content/drive/MyDrive/tracking_cells/checkpoints/ost_cells_v1/OSTrack_ep0012.pth.tar"
     # whether to save boxes from all queries
     params.save_all_boxes = False
 
