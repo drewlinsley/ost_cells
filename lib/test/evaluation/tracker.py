@@ -318,7 +318,6 @@ class Tracker:
             self.state = state  # Not tracking, so overwrite with existing tracks
 
             # Get encodings
-            import pdb;pdb.set_trace()
             out = tracker.track(frame, store_grad=True)
             encoding = out["encodings"]
             input_patch = out["input_patch"]  # Has a gradient
@@ -328,7 +327,7 @@ class Tracker:
             dist = ((enc_a - enc_b) ** 2).mean()
             # tracker.network.zero_grad()
             dist.backward()
-            gradient = input_patch.grad.data
+            gradient = input_patch.grad.data.cpu().numpy()
             gradients.append(gradient)
         return gradients
 
