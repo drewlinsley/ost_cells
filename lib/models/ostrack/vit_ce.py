@@ -105,7 +105,6 @@ class VisionTransformerCE(VisionTransformer):
                          ):
         B, H, W = x.shape[0], x.shape[2], x.shape[3]
 
-        import pdb;pdb.set_trace()
         x = self.patch_embed(x)
         z = self.patch_embed(z)
 
@@ -188,9 +187,10 @@ class VisionTransformerCE(VisionTransformer):
     def forward(self, z, x, ce_template_mask=None, ce_keep_rate=None,
                 tnc_keep_rate=None,
                 return_last_attn=False):
-        x, aux_dict = self.forward_features(z, x, ce_template_mask=ce_template_mask, ce_keep_rate=ce_keep_rate,)
+        import pdb;pdb.set_trace()
+        proc_x, aux_dict = self.forward_features(z, x, ce_template_mask=ce_template_mask, ce_keep_rate=ce_keep_rate,)
 
-        return x, aux_dict
+        return proc_x, aux_dict
 
 
 def _create_vision_transformer(pretrained=False, **kwargs):
