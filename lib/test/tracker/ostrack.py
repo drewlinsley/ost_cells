@@ -47,7 +47,7 @@ class OSTrack(BaseTracker):
         self.save_all_boxes = params.save_all_boxes
         self.z_dict1 = {}
 
-    def initialize(self, image, store_grad=False, info: dict):
+    def initialize(self, image, info: dict,  store_grad=False):
         # forward the template once
         z_patch_arr, resize_factor, z_amask_arr = sample_target(image, info['init_bbox'], self.params.template_factor,
                                                     output_sz=self.params.template_size)
