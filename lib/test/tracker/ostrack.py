@@ -47,14 +47,17 @@ class OSTrack(BaseTracker):
         self.save_all_boxes = params.save_all_boxes
         self.z_dict1 = {}
 
-    def initialize(self, image, info: dict):
+    def initialize(self, image, store_grad=False, info: dict):
         # forward the template once
         z_patch_arr, resize_factor, z_amask_arr = sample_target(image, info['init_bbox'], self.params.template_factor,
                                                     output_sz=self.params.template_size)
         self.z_patch_arr = z_patch_arr
         template = self.preprocessor.process(z_patch_arr, z_amask_arr)
-        with torch.no_grad():
+        if store_grad:
             self.z_dict1 = template
+        else:
+            with torch.no_grad():
+                self.z_dict1 = template
 
         self.box_mask_z = None
         if self.cfg.MODEL.BACKBONE.CE_LOC:
