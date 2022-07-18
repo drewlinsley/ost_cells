@@ -305,7 +305,7 @@ class Tracker:
             self.state = state  # Not tracking, so overwrite with existing tracks
 
             # Get encodings
-            out = tracker.track(frame)
+            out = tracker.track(frame, store_grad=True)
             encoding = out["encodings"]
             encoding = encoding.squeeze(0).mean(0).reshape(1, -1)
             encs_a.append(encoding)
