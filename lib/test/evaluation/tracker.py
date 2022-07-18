@@ -266,11 +266,72 @@ class Tracker:
             encoding = out["encodings"]
 
             # Figure out how to summarize encodings
-            # encoding = encoding.squeeze(0).mean(0).detach().cpu().numpy().reshape(1, -1)
-            encoding = encoding.squeeze(0).mean(1).detach().cpu().numpy().reshape(1, -1)
+            encoding = encoding.squeeze(0).mean(0).detach().cpu().numpy().reshape(1, -1)
             output_heatmaps.append(encoding)
 
         return output_heatmaps
+
+    def gradient_of_distance(self, framesa, framesb, statesa, statesb, debug=False, visdom_info=None, save_results=False):
+        """Run the tracker with the vieofile.
+        args:
+            debug: Debug level.
+        """
+
+        params = self.get_parameters()
+
+        debug_ = debug
+        if debug is None:
+            debug_ = getattr(params, 'debug', 0)
+        params.debug = debug_
+
+        params.tracker_name = self.name
+        params.param_name = self.parameter_name
+        # self._init_visdom(visdom_info, debug_)
+
+        multiobj_mode = getattr(params, 'multiobj_mode', getattr(self.tracker_class, 'multiobj_mode', 'default'))
+
+        tracker = self.create_tracker(params)
+        if hasattr(tracker, 'initialize_features'):
+            tracker.initialize_features()
+
+        def _build_init_info(box):
+            return {'init_bbox': box}
+
+
+        # First track framesa
+        tracker.initialize(framesa[0], _build_init_info(statesa[0]))
+        encs_a = []
+        for frame, state in zip(framesa, statesa):
+            self.state = state  # Not tracking, so overwrite with existing tracks
+
+            # Get encodings
+            out = tracker.track(frame)
+            encoding = out["encodings"]
+            encoding = encoding.squeeze(0).mean(0).reshape(1, -1)
+            encs_a.append(encoding)
+
+        # Next track framesb, compute distance of ||encodingb|| - encodinga_t||, and store gradient of difference wrt framesb
+        tracker.initialize(framesb[0], _build_init_info(statesb[0]))
+        import pdb;pdb.set_trace()
+        enc_b = []
+        gradients = []
+        for frame, state, enc_a in zip(framesb, statesb, encs_a):
+            self.state = state  # Not tracking, so overwrite with existing tracks
+
+            # Get encodings
+            import pdb;pdb.set_trace()
+            frame.requires_grad()
+            out = tracker.track(frame, store_grad=True)
+            encoding = out["encodings"]
+            enc_b = encoding.squeeze(0).mean(0).reshape(1, -1)
+
+            # Get difference and gradient
+            dist = ((enc_a - enc_b) ** 2).mean()
+            tracker.zero_grad()
+            dist.backward()
+            gradient = frame.grad.data
+            gradients.append(gradient)
+        return gradients
 
     def get_parameters(self):
         """Get parameters."""

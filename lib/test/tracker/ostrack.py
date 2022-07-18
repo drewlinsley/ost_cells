@@ -70,19 +70,27 @@ class OSTrack(BaseTracker):
             all_boxes_save = info['init_bbox'] * self.cfg.MODEL.NUM_OBJECT_QUERIES
             return {"all_boxes": all_boxes_save}
 
-    def track(self, image, info: dict = None):
+    def track(self, image, store_grad=False, info: dict = None):
         H, W, _ = image.shape
         self.frame_id += 1
+        import pdb;pdb.set_trace()
         x_patch_arr, resize_factor, x_amask_arr = sample_target(image, self.state, self.params.search_factor,
                                                                 output_sz=self.params.search_size)  # (x1, y1, w, h)
         search = self.preprocessor.process(x_patch_arr, x_amask_arr)
 
-        with torch.no_grad():
+        if store_grad:
             x_dict = search
             # merge the template and the search
             # run the transformer
             out_dict = self.network.forward(
                 template=self.z_dict1.tensors, search=x_dict.tensors, ce_template_mask=self.box_mask_z)
+        else:
+            with torch.no_grad():
+                x_dict = search
+                # merge the template and the search
+                # run the transformer
+                out_dict = self.network.forward(
+                    template=self.z_dict1.tensors, search=x_dict.tensors, ce_template_mask=self.box_mask_z)
 
         # add hann windows
         pred_score_map = out_dict['score_map']
