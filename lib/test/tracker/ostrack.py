@@ -52,10 +52,11 @@ class OSTrack(BaseTracker):
         z_patch_arr, resize_factor, z_amask_arr = sample_target(image, info['init_bbox'], self.params.template_factor,
                                                     output_sz=self.params.template_size)
         self.z_patch_arr = z_patch_arr
-        template = self.preprocessor.process(z_patch_arr, z_amask_arr)
         if store_grad:
+            template = self.preprocessor.process(z_patch_arr, z_amask_arr, store_grad=True)
             self.z_dict1 = template
         else:
+            template = self.preprocessor.process(z_patch_arr, z_amask_arr)
             with torch.no_grad():
                 self.z_dict1 = template
 
