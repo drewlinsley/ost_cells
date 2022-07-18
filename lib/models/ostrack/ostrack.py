@@ -44,12 +44,16 @@ class OSTrack(nn.Module):
                 ce_keep_rate=None,
                 return_last_attn=False,
                 ):
-        if store_grad:
-            import pdb;pdb.set_trace()
         x, aux_dict = self.backbone(z=template, x=search,
                                     ce_template_mask=ce_template_mask,
                                     ce_keep_rate=ce_keep_rate,
                                     return_last_attn=return_last_attn, )
+        if store_grad:
+            loss = x.sum()
+            import pdb;pdb.set_trace()
+            template.grad
+            search.grad
+
 
         # Forward head
         feat_last = x
