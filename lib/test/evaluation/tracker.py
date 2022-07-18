@@ -319,7 +319,6 @@ class Tracker:
 
             # Get encodings
             import pdb;pdb.set_trace()
-            frame.requires_grad()
             out = tracker.track(frame, store_grad=True)
             encoding = out["encodings"]
             input_patch = out["input_patch"]  # Has a gradient
