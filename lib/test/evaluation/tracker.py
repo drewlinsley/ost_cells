@@ -266,7 +266,8 @@ class Tracker:
             encoding = out["encodings"]
 
             # Figure out how to summarize encodings
-            encoding = encoding.squeeze(0).mean(0).detach().cpu().numpy().reshape(1, -1)
+            # encoding = encoding.squeeze(0).mean(0).detach().cpu().numpy().reshape(1, -1)
+            encoding = encoding.squeeze(0).mean(1).detach().cpu().numpy().reshape(1, -1)
             output_heatmaps.append(encoding)
 
         return output_heatmaps
