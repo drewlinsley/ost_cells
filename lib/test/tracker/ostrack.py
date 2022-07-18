@@ -85,7 +85,7 @@ class OSTrack(BaseTracker):
             # run the transformer
             import pdb;pdb.set_trace()
             out_dict = self.network.forward(
-                template=self.z_dict1.tensors, search=x_dict.tensors, ce_template_mask=self.box_mask_z)
+                template=self.z_dict1.tensors, search=x_dict.tensors, ce_template_mask=self.box_mask_z, store_grad=True)
         else:
             search = self.preprocessor.process(x_patch_arr, x_amask_arr)
             x_patch_arr_grad = None
