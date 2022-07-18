@@ -326,7 +326,7 @@ class Tracker:
 
             # Get difference and gradient
             dist = ((enc_a - enc_b) ** 2).mean()
-            tracker.zero_grad()
+            tracker.network.zero_grad()
             dist.backward()
             gradient = input_patch.grad.data
             gradients.append(gradient)
