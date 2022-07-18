@@ -87,10 +87,10 @@ class OSTrack(BaseTracker):
             x_dict.tensors.requires_grad = True
             out_dict = self.network.forward(
                 template=self.z_dict1.tensors, search=x_dict.tensors, ce_template_mask=self.box_mask_z)
-            import pdb;pdb.set_trace()
-            loss = out_dict['backbone_feat'].sum()
-            loss.backward()
-            x_dict.tensors.grad
+            # Debug the grads --
+            # loss = out_dict['backbone_feat'].sum()
+            # loss.backward()
+            # x_dict.tensors.grad
             x_patch_arr_grad = x_dict.tensors
         else:
             x_patch_arr_grad = None

@@ -305,13 +305,13 @@ class Tracker:
             self.state = state  # Not tracking, so overwrite with existing tracks
 
             # Get encodings
-            out = tracker.track(frame, store_grad=True)
+            out = tracker.track(frame)
             encoding = out["encodings"]
             encoding = encoding.squeeze(0).mean(0).reshape(1, -1)
             encs_a.append(encoding)
 
         # Next track framesb, compute distance of ||encodingb|| - encodinga_t||, and store gradient of difference wrt framesb
-        tracker.initialize(framesb[0], _build_init_info(statesb[0]), store_grad=True)
+        tracker.initialize(framesb[0], _build_init_info(statesb[0]))
         enc_b = []
         gradients = []
         for frame, state, enc_a in zip(framesb, statesb, encs_a):
