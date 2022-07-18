@@ -79,17 +79,18 @@ class OSTrack(BaseTracker):
         self.frame_id += 1
         x_patch_arr, resize_factor, x_amask_arr = sample_target(image, self.state, self.params.search_factor,
                                                                 output_sz=self.params.search_size)  # (x1, y1, w, h)
+        search = self.preprocessor.process(x_patch_arr, x_amask_arr)
+        x_dict = search
         if store_grad:
-            search, x_patch_arr_grad = self.preprocessor.process(x_patch_arr, x_amask_arr, store_grad=store_grad)
-            x_dict = search
             # merge the template and the search
             # run the transformer
+            x_dict.tensors.requires_grad = True
             out_dict = self.network.forward(
                 template=self.z_dict1.tensors, search=x_dict.tensors, ce_template_mask=self.box_mask_z, store_grad=True)
+            import pdb;pdb.set_trace()
+            x_patch_arr_grad = x_dict.tensors
         else:
-            search = self.preprocessor.process(x_patch_arr, x_amask_arr)
             x_patch_arr_grad = None
-            x_dict = search
             with torch.no_grad():
                 # merge the template and the search
                 # run the transformer

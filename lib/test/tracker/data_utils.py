@@ -17,10 +17,7 @@ class Preprocessor(object):
         img_tensor_norm = ((img_tensor / 255.0) - self.mean) / self.std  # (1,3,H,W)
         # Deal with the attention mask
         amask_tensor = torch.from_numpy(amask_arr).to(torch.bool).cuda().unsqueeze(dim=0)  # (1,H,W)
-        if store_grad:
-            return NestedTensor(img_tensor_norm, amask_tensor), img_tensor
-        else:
-            return NestedTensor(img_tensor_norm, amask_tensor)
+        return NestedTensor(img_tensor_norm, amask_tensor)
 
 
 class PreprocessorX(object):
