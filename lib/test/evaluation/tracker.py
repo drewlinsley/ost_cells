@@ -312,8 +312,7 @@ class Tracker:
 
         # Next track framesb, compute distance of ||encodingb|| - encodinga_t||, and store gradient of difference wrt framesb
         tracker.initialize(framesb[0], _build_init_info(statesb[0]))
-        enc_b = []
-        gradients = []
+        gradients, patches = [], []
         for frame, state, enc_a in zip(framesb, statesb, encs_a):
             self.state = state  # Not tracking, so overwrite with existing tracks
 
@@ -329,7 +328,8 @@ class Tracker:
             dist.backward()
             gradient = input_patch.grad.data.cpu().numpy()
             gradients.append(gradient)
-        return gradients
+            patches.append(input_patch.detach().cpu().numpy())
+        return gradients, patches
 
     def get_parameters(self):
         """Get parameters."""
