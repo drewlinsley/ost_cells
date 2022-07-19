@@ -320,7 +320,7 @@ class Tracker:
             if smooth_iters:
                 smoothed = []
                 for _ in range(smooth_iters):
-                    frame = frame + np.random.normal(scale=1e-3, size=frame.shape)
+                    noise_frame = frame + np.random.normal(scale=1e-3, size=frame.shape)
                     out = tracker.track(noise_frame, store_grad=True)
                     encoding = out["encodings"]
                     input_patch = out["input_patch"]  # Has a gradient
