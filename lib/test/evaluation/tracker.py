@@ -271,7 +271,7 @@ class Tracker:
 
         return output_heatmaps
 
-    def gradient_of_distance(self, framesa, framesb, statesa, statesb, debug=False, visdom_info=None, save_results=False):
+    def gradient_of_distance(self, framesa, framesb, statesa, statesb, smooth_iters=0, debug=False, visdom_info=None, save_results=False):
         """Run the tracker with the vieofile.
         args:
             debug: Debug level.
@@ -317,16 +317,33 @@ class Tracker:
             self.state = state  # Not tracking, so overwrite with existing tracks
 
             # Get encodings
-            out = tracker.track(frame, store_grad=True)
-            encoding = out["encodings"]
-            input_patch = out["input_patch"]  # Has a gradient
-            enc_b = encoding.squeeze(0).mean(0).reshape(1, -1)
+            if smooth_iters:
+                smoothed = []
+                for _ in range(smooth_iters):
+                    frame = frame + np.random.normal(scale=1e-3, size=frame.shape)
+                    out = tracker.track(noise_frame, store_grad=True)
+                    encoding = out["encodings"]
+                    input_patch = out["input_patch"]  # Has a gradient
+                    enc_b = encoding.squeeze(0).mean(0).reshape(1, -1)
 
-            # Get difference and gradient
-            dist = ((enc_a - enc_b) ** 2).mean()
-            # tracker.network.zero_grad()
-            dist.backward()
-            gradient = input_patch.grad.data.cpu().numpy()
+                    # Get difference and gradient
+                    dist = ((enc_a - enc_b) ** 2).mean()
+                    tracker.network.zero_grad()
+                    dist.backward()
+                    gradient = input_patch.grad.data.cpu().numpy()
+                    smoothed.append(gradient)
+                gradient = np.stack(smoothed, 0).mean(0)
+            else:
+                out = tracker.track(frame, store_grad=True)
+                encoding = out["encodings"]
+                input_patch = out["input_patch"]  # Has a gradient
+                enc_b = encoding.squeeze(0).mean(0).reshape(1, -1)
+
+                # Get difference and gradient
+                dist = ((enc_a - enc_b) ** 2).mean()
+                tracker.network.zero_grad()
+                dist.backward()
+                gradient = input_patch.grad.data.cpu().numpy()
             gradients.append(gradient)
             patches.append(input_patch.detach().cpu().numpy())
         return gradients, patches
