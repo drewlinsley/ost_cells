@@ -199,7 +199,6 @@ class Tracker:
         def _build_init_info(box):
             return {'init_bbox': box}
 
-
         assert optional_box is not None
         assert isinstance(optional_box, (list, tuple))
         assert len(optional_box) == 4, "valid box's foramt is [x,y,w,h]"
