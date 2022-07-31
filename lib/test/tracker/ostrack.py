@@ -145,8 +145,6 @@ class OSTrack(BaseTracker):
             return {"target_bbox": self.state,
                     "all_boxes": all_boxes_save}
         else:
-            import pdb;pdb.set_trace()
-
             return {
                 "target_bbox": self.state,
                 "heatmap": response.detach().cpu().numpy(),
