@@ -85,7 +85,6 @@ class OSTrack(BaseTracker):
             # merge the template and the search
             # run the transformer
             x_dict.tensors.requires_grad = True
-            import pdb;pdb.set_trace()
             out_dict = self.network.forward(
                 template=self.z_dict1.tensors, search=x_dict.tensors, ce_template_mask=self.box_mask_z)
             # Debug the grads --
@@ -152,7 +151,7 @@ class OSTrack(BaseTracker):
                 "target_bbox": self.state,
                 "heatmap": response.detach().cpu().numpy(),
                 "bbox_score": bbox_score.detach().cpu().numpy(),
-                "encodings": out_dict['backbone_feat'],
+                "encodings": out_dict["search_feat"],  # out_dict['backbone_feat'],
                 "input_patch": x_patch_arr_grad
             }
 
