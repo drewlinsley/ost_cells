@@ -85,6 +85,7 @@ class OSTrack(BaseTracker):
             # merge the template and the search
             # run the transformer
             x_dict.tensors.requires_grad = True
+            import pdb;pdb.set_trace()
             out_dict = self.network.forward(
                 template=self.z_dict1.tensors, search=x_dict.tensors, ce_template_mask=self.box_mask_z)
             # Debug the grads --
@@ -145,6 +146,7 @@ class OSTrack(BaseTracker):
             return {"target_bbox": self.state,
                     "all_boxes": all_boxes_save}
         else:
+            import pdb;pdb.set_trace()
 
             return {
                 "target_bbox": self.state,
