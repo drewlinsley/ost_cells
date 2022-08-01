@@ -253,7 +253,7 @@ class Tracker:
             return {'init_bbox': box}
 
         tracker.initialize(frames[0], _build_init_info(states[0]))
-        output_heatmaps = []
+        output_heatmaps, output_boxes = [], []
         for frame, state in zip(frames, states):
             self.state = state  # Not tracking, so overwrite with existing tracks
 
@@ -263,12 +263,14 @@ class Tracker:
             # Draw box
             out = tracker.track(frame)
             encoding = out["encodings"]
+            state = [int(s) for s in out["target_bbox"]]
 
             # Figure out how to summarize encodings
             encoding = encoding.squeeze(0).mean(0).detach().cpu().numpy().reshape(1, -1)
             output_heatmaps.append(encoding)
+            output_boxes.append(state)
 
-        return output_heatmaps
+        return output_heatmaps, output_boxes
 
     def gradient_of_distance(self, framesa, framesb, statesa, statesb, smooth_iters=0, debug=False, visdom_info=None, save_results=False):
         """Run the tracker with the vieofile.
